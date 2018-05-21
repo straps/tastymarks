@@ -1,0 +1,21 @@
+# dependencies
+node_modules
+
+# logs
+**/*.log
+
+# Nuxt build
+.nuxt
+
+# Nuxt generate
+dist
+
+# Backpack build
+build
+
+# VS Code settings
+.vscode
+
+#Dynamic images
+**/avatars/*.jpg
+**/urlimg/*.png
