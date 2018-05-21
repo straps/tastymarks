@@ -19,3 +19,6 @@ build
 #Dynamic images
 **/avatars/*.jpg
 **/urlimg/*.png
+
+#Secrets
+**/server-secrets.js
