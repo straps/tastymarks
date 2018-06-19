@@ -1,32 +1,34 @@
 <template>
-  <v-container grid-list-lg>
-    <v-layout row wrap>
-      <v-flex xs12>
-        <title-card title="Bookmarks tagged as " :subject="tag"></title-card>
-      </v-flex>
-      <v-flex xs12 v-for="b in bookmarks" :key="b.id">
-        <bookmark-card :bookmark="b" :showUser="true"></bookmark-card>
-      </v-flex>
-    </v-layout>
-  </v-container>
+  <std-page v-bind="{title, subject, bookmarks, userCanSubscribe, userIsSubscribed, askNewDataPath:dataPath, showBookmarkOwners, canDeleteBookmarks}"></std-page>
 </template>
 
 <script>
 import axios from '@/plugins/axios'
-import BookmarkCard from '@/components/BookmarkCard'
-import TitleCard from '@/components/TitleCard'
+import StdPage from '@/components/StdPage'
+
 export default {
-  async asyncData ({ route }) {
-    let res = await axios.get(`/api/bookmarks/0/${route.params.tag}`)
+  async asyncData (context) {
     let rv = {
-      tag: route.params.tag,
-      bookmarks: res.data
+      dataPath: `/api/bookmarks/0/${context.route.params.tag}`
     }
+    let res = await axios.get(rv.dataPath, { params: { limit: process.server ? 10 : 5, offset: 0, search: context.store.state.search } })
+
+    rv.subject = context.route.params.tag
+    rv.bookmarks = res.data
+
     return rv
   },
+  data () {
+    return {
+      title: 'Bookmarks tagged as ',
+      userCanSubscribe: false, // TODO gestire la sottoscrizione
+      userIsSubscribed: false,
+      showBookmarkOwners: true,
+      canDeleteBookmarks: false
+    }
+  },
   components: {
-    BookmarkCard,
-    TitleCard
+    StdPage
   }
 }
 </script>

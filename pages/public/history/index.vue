@@ -1,35 +1,36 @@
 <template>
-  <v-container grid-list-lg>
-    <v-layout row wrap>
-      <v-flex xs12>
-        <title-card title="Last Saved Bookmarks by " subject="all Users"></title-card>
-      </v-flex>
-      <v-flex xs12 v-for="b in bookmarks" :key="b.id">
-        <bookmark-card :bookmark="b"></bookmark-card>
-      </v-flex>
-    </v-layout>
-  </v-container>
+  <std-page v-bind="{title, subject, bookmarks, userCanSubscribe, userIsSubscribed, askNewDataPath:dataPath, showBookmarkOwners, canDeleteBookmarks}"></std-page>
 </template>
 
 <script>
 import axios from '@/plugins/axios'
-import BookmarkCard from '@/components/BookmarkCard'
-import TitleCard from '@/components/TitleCard'
-import moment from 'moment'
+import StdPage from '@/components/StdPage'
+
 export default {
   async asyncData (context) {
-    let { data } = await axios.get('/api/bookmarks')
-    return { bookmarks: data }
+    let rv = {
+      dataPath: `/api/bookmarks`
+    }
+
+    let res = await axios.get(rv.dataPath, { params: { limit: process.server ? 10 : 5, offset: 0, search: context.store.state.search } })
+    rv.bookmarks = res.data
+
+    return rv
   },
-  methods: {
-    fmtDate (datetime, fmt) {
-      fmt = fmt || 'DD/MM/YY [at] HH:mm'
-      return moment(datetime).format(fmt)
+  data () {
+    return {
+      title: 'Last saved bookmarks by ',
+      subject: 'all Users',
+      userCanSubscribe: false,
+      userIsSubscribed: false,
+      showBookmarkOwners: true,
+      canDeleteBookmarks: false
     }
   },
+  methods: {
+  },
   components: {
-    BookmarkCard,
-    TitleCard
+    StdPage
   }
 }
 </script>

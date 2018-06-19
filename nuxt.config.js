@@ -46,7 +46,8 @@ module.exports = {
     '@/plugins/chartkick',
     { src: '~plugins/ga', ssr: false },
     { src: '~plugins/onesignal', ssr: false },
-    { src: '~plugins/vue-swal', ssr: false }
+    { src: '~plugins/vue-swal', ssr: false },
+    { src: '~plugins/tasty' },
   ],
   router: {
     middleware: [

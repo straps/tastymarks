@@ -31,7 +31,7 @@ export default async function ({app, store}) {
             }
           })
         } catch (e) {
-          console.log('onesignal exc ' + e)
+          console.log('onesignal exc ', e)
         }
       }
     }

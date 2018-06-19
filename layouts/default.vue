@@ -1,5 +1,6 @@
 <template>
   <v-app dark v-resize="onResize">
+
     <v-navigation-drawer fixed clipped v-model="drawer" app>
       <v-list dense>
 
@@ -83,8 +84,12 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <img class="logo" src="/images/logo/logo-grey-32.png">
       <v-toolbar-title class="mr-5 align-center">
-        <nuxt-link class="title white--text" to="/">Tasty Bookmarks</nuxt-link>
+        <nuxt-link v-if="$store.state.windowSize.mdAndUp || !searching" class="title white--text" to="/">
+          Tasty Bookmarks
+        </nuxt-link>
       </v-toolbar-title>
+
+      <v-text-field clearable v-model="search" align-end :append-icon-cb="() => {}" placeholder="Search..." single-line append-icon="search" color="white" hide-details @focus="searching=true" @blur="searching=false" @input="onSearchChangedDeb"></v-text-field>
     </v-toolbar>
 
     <v-content class="main-content">
@@ -100,9 +105,14 @@
 
 <script>
 import axios from '@/plugins/axios'
-export default {
+import { debounce } from 'lodash'
+
+console.log(debounce)
+
+const rv = {
   data: () => ({
     drawer: false,
+    searching: false,
     items: [
       { icon: 'trending_up', text: 'Trending Bookmarks', to: '/trending/bookmarks' },
       // { icon: 'bookmark', text: 'Trending Tags', to: '/trending/tags' },
@@ -119,15 +129,31 @@ export default {
     onResize () {
       this.$store.commit('setWindowSize', {w: window.innerWidth, h: window.innerHeight})
     },
+    onSearchChanged (event) {
+      this.$root.$emit('search-changed')
+    },
     async logout () {
       this.$auth.logout()
       await axios.post('/api/logout')
       this.$store.commit('logout')
-    }
+    },
+    debounce
   },
-  components: {
+  computed: {
+    search: {
+      get () {
+        return this.$store.state.search
+      },
+      set (value) {
+        this.$store.commit('setSearch', value)
+      }
+    }
   }
 }
+
+rv.methods.onSearchChangedDeb = debounce(rv.methods.onSearchChanged, 1000)
+
+export default rv
 </script>
 
 <style scoped>

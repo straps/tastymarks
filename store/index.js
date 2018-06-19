@@ -6,7 +6,8 @@ export const state = () => ({
   mostActiveUsers: [],
   windowSize: {},
   debug: process.env.NODE_ENV !== 'production',
-  showFloatingButton: false
+  showFloatingButton: false,
+  search: ''
 })
 
 export const mutations = {
@@ -53,6 +54,9 @@ export const mutations = {
     state.windowSize.mdAndDown = size.w < 1264
     state.windowSize.smAndDown = size.w < 960
     state.windowSize.xsAndDown = size.w < 600
+  },
+  setSearch (state, value) {
+    state.search = value
   }
 }
 
@@ -73,6 +77,8 @@ export const actions = {
 
     res = await axios.get('/api/users/active')
     commit('setMostActiveUsers', res.data)
+
+    commit('setSearch', req.query.search || '')
   },
   async subscribeToUser  ({ commit, state }, userid) {
     await axios.post(`/api/subscribe/${state.user.id}/to/user/${userid}`)

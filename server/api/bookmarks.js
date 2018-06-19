@@ -19,19 +19,19 @@ const queryPrefix = `select b.id, b.url, b.title, b.notes, b.userid, b.created, 
 const querySuffix = `group by b.id, b.url, b.title, b.notes, b.userid, b.created, b.modified, u.name
   order by b.modified desc`
 
-// router.get('/test/mail', async function ({params, query}, res, next) {
-//   sendMailTemplate('fstraps@gmail.com', 'TastyMarks notification', 'email-template', {
-//     title:'Titolo', subtitle:'Sottotitolo email',
-//     burl:'https://mynext.it', btitle:'NeXT Website',
-//     unsubscribeUrl:'https://tastymarks.com/unsubscribe'
-//   })
-//   res.send({err:null})
-// });
+const getSearchCondition = (search) => {
+  return `lower(b.title) like lower('%${search}%') or lower(t.tag)=lower('${search}')`
+}
 
 router.get('/bookmarks/:userid?/:tag?', async function ({params, query}, res, next) {
   const usercond=params.userid>0 ? `userid=${params.userid}` : 'true'
   const tagcond=params.tag ? `b.id in (select bookmarkid from tags where tag='${params.tag}')` : 'true'
-  const q=`${queryPrefix} where ${usercond} and ${tagcond} ${querySuffix} limit ${query.limit||100} offset ${query.offset||0}`
+  let q=`${queryPrefix} where ${usercond} and ${tagcond} `
+  if (query.search){
+    q = `${q} and (${getSearchCondition(query.search)}) `
+  }
+  q=`${q} ${querySuffix} limit ${query.limit||100} offset ${query.offset||0}`
+
   const qres = await client.query(q)
 
   res.json(qres.rows.map((el) => {
@@ -42,12 +42,16 @@ router.get('/bookmarks/:userid?/:tag?', async function ({params, query}, res, ne
 })
 
 router.get('/trending/bookmarks', async function ({params, query}, res, next) {
-  const subq = `select max(id) as id
-    from bookmarks where modified>now()-interval '30 days'
-    group by url
+  let subq = `select max(id) as id
+    from bookmarks b where modified>now()-interval '30 days'`
+  if (query.search) {
+    subq = `${subq} and (${getSearchCondition(query.search)})`
+  }
+  subq=`${subq} group by url
     order by count(id) desc, max(modified) desc
     limit ${query.limit || 100} offset ${query.offset || 0}`;
   const q=`${queryPrefix} where b.id in (${subq}) ${querySuffix}`
+
   const qres = await client.query(q)
 
   res.json(qres.rows.map((el) => {

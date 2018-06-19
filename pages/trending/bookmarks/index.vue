@@ -1,28 +1,31 @@
 <template>
-  <v-container grid-list-lg>
-    <v-layout row wrap>
-      <v-flex xs12>
-        <title-card title="Trending Bookmarks"></title-card>
-      </v-flex>
-      <v-flex xs12 v-for="b in bookmarks" :key="b.id">
-        <bookmark-card :bookmark="b" :showUser="true"></bookmark-card>
-      </v-flex>
-    </v-layout>
-  </v-container>
+  <std-page v-bind="{title, bookmarks, userCanSubscribe, userIsSubscribed, askNewDataPath:dataPath, showBookmarkOwners: true, canDeleteBookmarks: false}"></std-page>
 </template>
 
 <script>
 import axios from '@/plugins/axios'
-import BookmarkCard from '@/components/BookmarkCard'
-import TitleCard from '@/components/TitleCard'
+import StdPage from '@/components/StdPage'
+
 export default {
   async asyncData (context) {
-    let { data } = await axios.get('/api/trending/bookmarks')
-    return { bookmarks: data }
+    let rv = {
+      dataPath: `/api/trending/bookmarks`
+    }
+
+    let res = await axios.get(rv.dataPath, { params: { limit: process.server ? 10 : 5, offset: 0, search: context.store.state.search } })
+    rv.bookmarks = res.data
+
+    return rv
+  },
+  data () {
+    return {
+      title: 'Trending Bookmarks',
+      userCanSubscribe: false,
+      userIsSubscribed: false
+    }
   },
   components: {
-    BookmarkCard,
-    TitleCard
+    StdPage
   }
 }
 </script>

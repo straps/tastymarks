@@ -18,7 +18,7 @@
     "forever": "forever -w --watchDirectory build start --uid tastymarks -l /tmp/tastymarks.log --append --spinSleepTime 5000 --minUptime 5000 build/main.js"
   },
   "dependencies": {
-    "@nuxtjs/auth": "^4.4.0",
+    "@nuxtjs/auth": "^4.5.1",
     "@nuxtjs/axios": "^5.3.1",
     "axios": "^0.16.2",
     "babel-polyfill": "^6.26.0",
@@ -27,25 +27,25 @@
     "connect-pg-simple": "^4.2.1",
     "console-stamp": "^0.2.6",
     "cookie-parser": "^1.4.3",
-    "cross-env": "^5.1.5",
+    "cross-env": "^5.2.0",
     "express": "^4.15.3",
     "express-force-domain": "0.0.6",
     "express-promise-router": "^3.0.2",
     "express-session": "^1.15.6",
-    "greenlock-express": "^2.1.4",
+    "greenlock-express": "^2.1.6",
     "lodash": "^4.17.10",
     "mailgun-js": "^0.18.0",
-    "moment": "^2.22.1",
-    "nuxt": "^1.0.0-rc3",
+    "moment": "^2.22.2",
+    "nuxt": "^1.4.1",
     "pg": "^7.4.3",
-    "puppeteer": "^1.4.0",
-    "request": "^2.86.0",
+    "puppeteer": "^1.5.0",
+    "request": "^2.87.0",
     "request-promise-native": "^1.0.5",
     "source-map-support": "^0.4.15",
-    "vue-chartkick": "^0.3.1",
+    "vue-chartkick": "^0.3.3",
     "vue-infinite-loading": "^2.3.1",
     "vue-swal": "^0.1.0",
-    "vuetify": "^1.0.18"
+    "vuetify": "^1.0.19"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
@@ -56,7 +56,7 @@
     "eslint-plugin-html": "^3.1.1",
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-node": "^5.1.1",
-    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-promise": "^3.8.0",
     "eslint-plugin-standard": "^3.1.0"
   }
 }
