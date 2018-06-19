@@ -13,7 +13,7 @@ import axios from '@/plugins/axios'
 import TitleCard from '@/components/TitleCard'
 
 export default {
-  async created () {
+  async mounted () {
     if (this.$auth && this.$auth.user) {
       let resuser = await axios.post('/api/user/1', {user: this.$auth.user})
 

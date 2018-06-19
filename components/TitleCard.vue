@@ -6,7 +6,7 @@
         <span v-text="subject" class="primary--text"></span>
       </h1>
       <v-spacer></v-spacer>
-      <v-btn v-if="canSubscribe"  :color="subscriptionColor" fab small dark @click="onSubscriptionClick">
+      <v-btn v-if="canSubscribe"  :color="subscriptionColor" fab small dark @click="onSubscriptionClick" :title="subButtonTitle">
         <v-icon v-text="subscriptionIcon"></v-icon>
       </v-btn>
     </v-card-title>
@@ -32,6 +32,9 @@ export default {
     },
     subscriptionColor () {
       return this.isSubscribed ? 'green' : 'secondary'
+    },
+    subButtonTitle () {
+      return this.isSubscribed ? 'Deactivate notifications' : 'Be notified in real-time about changes'
     }
   }
 }
