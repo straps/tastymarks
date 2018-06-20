@@ -19,7 +19,8 @@ CREATE TABLE public.bookmarks (
     notes text,
     userid integer,
     created timestamp with time zone DEFAULT now(),
-    modified timestamp with time zone DEFAULT now()
+    modified timestamp with time zone DEFAULT now(),
+    copyof integer DEFAULT 0
 );
 CREATE SEQUENCE public.bookmarks_id_seq
     START WITH 1

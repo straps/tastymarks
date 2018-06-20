@@ -26,9 +26,9 @@ const getSearchCondition = (search) => {
 router.get('/bookmarks/:userid?/:tag?', async function ({params, query}, res, next) {
   const usercond=params.userid>0 ? `userid=${params.userid}` : 'true'
   const tagcond=params.tag ? `b.id in (select bookmarkid from tags where tag='${params.tag}')` : 'true'
-  let q=`${queryPrefix} where ${usercond} and ${tagcond} `
+  let q=`${queryPrefix} where ${usercond} and ${tagcond}`
   if (query.search){
-    q = `${q} and (${getSearchCondition(query.search)}) `
+    q = `${q} and (${getSearchCondition(query.search)})`
   }
   q=`${q} ${querySuffix} limit ${query.limit||100} offset ${query.offset||0}`
 
@@ -83,7 +83,7 @@ router.post('/bookmark/add', async function (req, res, next) {
   if (id){  // update
     await client.query('update bookmarks set title=$1, url=$2, notes=$3, modified=now() where id=$4', [bookmark.title, bookmark.url, bookmark.notes, id])
   }else{                    // insert
-    const inserted = await client.query('insert into bookmarks values (DEFAULT, $1, $2, $3, $4) returning *', [bookmark.url, bookmark.title, bookmark.notes, bookmark.userid])
+    const inserted = await client.query('insert into bookmarks values (DEFAULT, $1, $2, $3, $4, DEFAULT, DEFAULT, $5) returning *', [bookmark.url, bookmark.title, bookmark.notes, bookmark.userid, bookmark.copyof])
     id = inserted.rows[0].id
 
     // Check for user subscriptions

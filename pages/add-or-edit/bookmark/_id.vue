@@ -49,6 +49,7 @@ export default {
       title: (res ? res.data.title : route.query.title) || '',
       notes: (res ? res.data.notes : route.query.notes) || '',
       tags: res ? res.data.tags : (route.query.tags ? route.query.tags.split('|') : []),
+      copyof: route.query.copyof || 0,
       tagsRules: [
         v => !!v.length || 'At least 1 tag required',
         v => v.length < 11 || 'Max 10 tags per bookmark allowed'
@@ -94,7 +95,8 @@ export default {
             url: this.url,
             title: this.title,
             notes: this.notes,
-            tags: this.tags
+            tags: this.tags,
+            copyof: this.copyof
           }
           await axios.post('/api/bookmark/add', { bookmark })
 

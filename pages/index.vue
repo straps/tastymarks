@@ -10,8 +10,8 @@
                 <span class="subheading">
                   If you liked Delicious bookmarks you will love Tasty Bookmarks, a modern approach to social bookmarking
                   <br><br>
-                  Every bookmark you save here is public and anyone can see what you save; on the other hand, you can see what other people saves
-                  on their bookmarks and take useful hints from them<br><br>
+                  Every bookmark you save here is public and anyone can see what you save; on the other hand, you can see what other people save
+                  and take useful hints from them<br><br>
                   You can tag your links with up to 10 simple words that will make it easy to categorize and find them
                   <span v-if="$store.state.windowSize.lgAndUp">
                     <br><br>

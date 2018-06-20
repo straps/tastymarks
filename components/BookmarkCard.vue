@@ -38,7 +38,7 @@
         <v-icon>delete</v-icon>
         <span class="hidden-sm-and-down">&nbsp; Delete</span>
       </v-btn>
-      <v-btn depressed :fab="$store.state.windowSize.smAndDown" small color="white red--text" v-if="loggedIn() && !myBookmark(bookmark)" :to="'/add-or-edit/bookmark?title='+encodeURIComponent(bookmark.title)+'&url='+encodeURIComponent(bookmark.url)+'&tags='+bookmark.tags.join('|')">
+      <v-btn depressed :fab="$store.state.windowSize.smAndDown" small color="white red--text" v-if="loggedIn() && !myBookmark(bookmark)" :to="'/add-or-edit/bookmark?copyof='+bookmark.id+'&title='+encodeURIComponent(bookmark.title)+'&url='+encodeURIComponent(bookmark.url)+'&tags='+bookmark.tags.join('|')">
         <v-icon>content_copy</v-icon>
         <span class="hidden-sm-and-down">&nbsp; Copy</span>
       </v-btn>
