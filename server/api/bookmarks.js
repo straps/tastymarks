@@ -92,21 +92,28 @@ router.post('/bookmark/add', async function (req, res, next) {
 
     const subscribers = await client.query('select users.* from users join usersubs on users.id=usersubs.userid where usersubs.targetuserid=$1', [bookmark.userid])
     for (let subscriber of subscribers.rows) {
-      sendNotification({
-        contents: { "en": `${user.name} just added a bookmark on TastyMarks: ${bookmark.title}` },
-        url: `https://tastymarks.com/user/${user.id}/bookmarks`,
-        filters: [
-          { "field": "tag", "key": "tasty_userid", "relation": "=", "value": subscriber.id }
-        ]
-      })
+      //Check if subscriber already have bookmark saved
+      let userbx = await client.query('select id from bookmarks where userid=$1 and url=$2', [subscriber.id, bookmark.url])
 
-      sendMailTemplate(subscriber.email, 'TastyMarks notification', 'email-template', {
-        title: `Bookmark added`,
-        subtitle: `User ${user.name} added the following bookmark right now`,
-        burl: bookmark.url,
-        btitle: bookmark.title,
-        unsubscribeUrl: `https://tastymarks.com/user/${user.id}/bookmarks`
-      })
+      console.log(userbx.rows);
+
+      if (!userbx.rows.length){
+        sendNotification({
+          contents: { "en": `${user.name} just added a bookmark on TastyMarks: ${bookmark.title}` },
+          url: `https://tastymarks.com/user/${user.id}/bookmarks`,
+          filters: [
+            { "field": "tag", "key": "tasty_userid", "relation": "=", "value": subscriber.id }
+          ]
+        })
+
+        sendMailTemplate(subscriber.email, 'TastyMarks notification', 'email-template', {
+          title: `Bookmark added`,
+          subtitle: `User ${user.name} added the following bookmark right now`,
+          burl: bookmark.url,
+          btitle: bookmark.title,
+          unsubscribeUrl: `https://tastymarks.com/user/${user.id}/bookmarks`
+        })
+      }
     }
 
     //TODO check for tags subscriptions
