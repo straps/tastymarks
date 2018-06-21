@@ -95,8 +95,6 @@ router.post('/bookmark/add', async function (req, res, next) {
       //Check if subscriber already have bookmark saved
       let userbx = await client.query('select id from bookmarks where userid=$1 and url=$2', [subscriber.id, bookmark.url])
 
-      console.log(userbx.rows);
-
       if (!userbx.rows.length){
         sendNotification({
           contents: { "en": `${user.name} just added a bookmark on TastyMarks: ${bookmark.title}` },
