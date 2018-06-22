@@ -23,7 +23,7 @@ const getSearchCondition = (search) => {
   return `lower(b.title) like lower('%${search}%') or lower(t.tag)=lower('${search}')`
 }
 
-router.get('/bookmarks/:userid?/:tag?', async function ({params, query}, res, next) {
+router.get('/bookmarks/:userid?/:tag?', async function ({params, query, session}, res, next) {
   const usercond=params.userid>0 ? `userid=${params.userid}` : 'true'
   const tagcond=params.tag ? `b.id in (select bookmarkid from tags where tag='${params.tag}')` : 'true'
   let q=`${queryPrefix} where ${usercond} and ${tagcond}`
@@ -73,24 +73,24 @@ router.get('/bookmark/:id', async function (req, res, next) {
 router.post('/bookmark/add', async function (req, res, next) {
   const bookmark = req.body.bookmark;
 
-  let id = bookmark.id;
+  let id = bookmark.id, userid = req.session.authUser.id;
 
   if (!id) {
-    let exists = await client.query('select id from bookmarks where userid=$1 and url=$2', [bookmark.userid, bookmark.url])
+    let exists = await client.query('select id from bookmarks where userid=$1 and url=$2', [userid, bookmark.url])
     id = exists.rows.length ? exists.rows[0].id : 0
   }
 
   if (id){  // update
     await client.query('update bookmarks set title=$1, url=$2, notes=$3, modified=now() where id=$4', [bookmark.title, bookmark.url, bookmark.notes, id])
   }else{                    // insert
-    const inserted = await client.query('insert into bookmarks values (DEFAULT, $1, $2, $3, $4, DEFAULT, DEFAULT, $5) returning *', [bookmark.url, bookmark.title, bookmark.notes, bookmark.userid, bookmark.copyof])
+    const inserted = await client.query('insert into bookmarks values (DEFAULT, $1, $2, $3, $4, DEFAULT, DEFAULT, $5) returning *', [bookmark.url, bookmark.title, bookmark.notes, userid, bookmark.copyof])
     id = inserted.rows[0].id
 
     // Check for user subscriptions
-    let user = await client.query('select * from users where id=$1', [bookmark.userid])
+    let user = await client.query('select * from users where id=$1', [userid])
     user = user.rows[0]
 
-    const subscribers = await client.query('select users.* from users join usersubs on users.id=usersubs.userid where usersubs.targetuserid=$1', [bookmark.userid])
+    const subscribers = await client.query('select users.* from users join usersubs on users.id=usersubs.userid where usersubs.targetuserid=$1', [userid])
     for (let subscriber of subscribers.rows) {
       //Check if subscriber already have bookmark saved
       let userbx = await client.query('select id from bookmarks where userid=$1 and url=$2', [subscriber.id, bookmark.url])
@@ -113,9 +113,7 @@ router.post('/bookmark/add', async function (req, res, next) {
         })
       }
     }
-
     //TODO check for tags subscriptions
-
   }
 
   // Update tags
@@ -131,19 +129,15 @@ router.post('/bookmark/add', async function (req, res, next) {
 })
 
 router.post('/bookmark/del/:id', async function (req, res, next) {
-  if (req.session.authUser) {
-    let exists = await client.query('select id from bookmarks where id=$1 and userid=$2', [req.params.id, req.session.authUser.id])
+  let exists = await client.query('select id from bookmarks where id=$1 and userid=$2', [req.params.id, req.session.authUser.id])
 
-    if (exists.rows.length) {
+  if (exists.rows.length) {
 
-      await client.query('delete from bookmarks where id=$1', [req.params.id])
+    await client.query('delete from bookmarks where id=$1', [req.params.id])
 
-      res.json({ err: null })
-
-    } else res.json({ err: 'Unauthorized' })
+    res.json({ err: null, id: req.params.id })
 
   } else res.json({ err: 'Unauthorized' })
 })
-
 
 export default router
