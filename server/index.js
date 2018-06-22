@@ -41,6 +41,17 @@ if (!dev) {
   app.use(forceDomain('https://tastymarks.com'));
 }
 
+//Check Auth
+app.use((req, res, next) => {
+  if (req.method==='GET' ||
+      req.session.authUser ||
+      req.url.indexOf('/api/user')===0){
+    next()
+  } else {
+    res.status(401).send({ error: 'Unauthorized' });
+  }
+})
+
 // Import API Routes
 app.use('/api', api)
 
