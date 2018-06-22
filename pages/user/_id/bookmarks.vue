@@ -1,10 +1,14 @@
 <template>
-  <std-page v-bind="{title, subject, bookmarks, userCanSubscribe, userIsSubscribed, askNewDataPath:dataPath, showBookmarkOwners:!curUser, canDeleteBookmarks:curUser}"></std-page>
+  <div>
+    <std-page v-bind="{title, subject, bookmarks, userCanSubscribe, userIsSubscribed, askNewDataPath:dataPath, showBookmarkOwners:!curUser, canDeleteBookmarks:curUser}"></std-page>
+    <confirm ref="confirm"></confirm>
+  </div>
 </template>
 
 <script>
 import axios from '@/plugins/axios'
 import StdPage from '@/components/StdPage'
+import Confirm from '@/components/Confirm'
 
 export default {
   async asyncData ({app, route, params, store}) {
@@ -21,7 +25,8 @@ export default {
     return rv
   },
   components: {
-    StdPage
+    StdPage,
+    Confirm
   },
   computed: {
     loggedIn () { return !!this.$store.state.user },
