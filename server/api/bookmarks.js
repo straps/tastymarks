@@ -24,7 +24,7 @@ const getSearchCondition = (search) => {
 }
 
 router.get('/bookmarks/:userid?/:tag?', async function ({params, query, session}, res, next) {
-  const usercond=params.userid>0 ? `userid=${params.userid}` : 'true'
+  const usercond=params.userid>0 ? `userid=${params.userid}` : 'copyof=0' // last added shows only not copied b-marks
   const tagcond=params.tag ? `b.id in (select bookmarkid from tags where tag='${params.tag}')` : 'true'
   let q=`${queryPrefix} where ${usercond} and ${tagcond}`
   if (query.search){
