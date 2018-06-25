@@ -84,12 +84,13 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <img class="logo" src="/images/logo/logo-grey-32.png">
       <v-toolbar-title class="mr-5 align-center">
-        <nuxt-link v-if="$store.state.windowSize.mdAndUp || !searching" class="title white--text" to="/">
-          Tasty Bookmarks
+        <nuxt-link class="title white--text" to="/">
+          <span v-if="$store.state.windowSize.mdAndUp">Tasty Bookmarks</span>
+          <span v-else><span v-if="!searching">Tastymarks</span></span>
         </nuxt-link>
       </v-toolbar-title>
 
-      <v-text-field clearable v-model="search" align-end :append-icon-cb="() => {}" placeholder="Search..." single-line append-icon="search" color="white" hide-details @focus="searching=true" @blur="searching=false" @input="onSearchChangedDeb"></v-text-field>
+      <v-text-field clearable v-model="search" ref="search" align-end :append-icon-cb="() => {}" placeholder="Search..." single-line append-icon="search" color="white" hide-details @focus="searching=true" @blur="searching=false" @input="onSearchChangedDeb"></v-text-field>
     </v-toolbar>
 
     <v-content class="main-content">
@@ -106,8 +107,6 @@
 <script>
 import axios from '@/plugins/axios'
 import { debounce } from 'lodash'
-
-console.log(debounce)
 
 const rv = {
   data: () => ({
